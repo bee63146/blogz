@@ -2,13 +2,13 @@
 
 {% block content %}
 <h1>Enter A New Post</h1>
-<form method="post">
+<form method='POST'>
     <table>
         <tr>
             <td>
             <label>
                 Title Of Your Blog Post:</br>
-                <input type="text" name='title' value='{{title}}'/>
+                <input name="blog_title" type="text" value='{{blog_title}}'/>
                 <p class="error">{{title_error}}</p>
             </label>
             </td>
@@ -16,14 +16,14 @@
                 <td>
                 <label>
                 Enter A New Blog Post:</br>
-                <textarea id = "center-textarea" name="body" rows="12" cols="75" value='{{body}}'></textarea>
+                <textarea id = "center-textarea" name="blog_body" rows="12" cols="75" value='{{blog_body}}'></textarea>
                 <p class="error">{{body_error}}</p>
                 </label>
                </td>
             </tr>
            <tr>
                <td>
-                    <input type="submit" value='Add Post' />
+                    <input type="submit" value='Add Post'/>
                </td>
            </tr>
         </table> 

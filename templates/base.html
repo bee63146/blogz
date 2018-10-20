@@ -1,16 +1,33 @@
 <!doctype html>
 <html>
-        
-<link rel="stylesheet" type="text/css" href="static\styles\style.css"/>
-    <head>
-        <nav>
-            <a href="/blog">All Blog Posts</a> 
-            <a href="/newpost">Make a New Blog</a> 
-        </nav>
-        <title>{{title}}</title>
+    <head>        
+        <link rel="stylesheet" type="text/css" href="static\styles\style.css"/>
+            <title>{{page_title}}</title>
     </head>
     <body>
+        <div style="text-align: right ">
+            <a href='/login'>login</a>
+            <a href='/logout'>log out</a>
+        </div>
+        <nav>
+            <!blog users>
+            <a href="/">Home</a>
+            <!Main blog page>
+            <a href="/blog">all posts</a>
+            <!Add a Blog Entry>
+            <a href="/login">new post</a>
+        </nav>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            <ul>
+            {% for category,message in messages %}
+                <li class="{{category}}">{{message}}</li>
+            {% endfor %}
+            </ul>    
+        {% endwith %}
+
         {% block content %}
-        {% endblock %}        
+
+        {% endblock %}
+
     </body>
 </html>
