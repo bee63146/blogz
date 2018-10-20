@@ -96,11 +96,11 @@ def login():
         username = request.form['username']
         password = request.form['password']
         if username == '' or password == '':
-            flash('Invalid username', 'error')
+            flash('Invalid username!', 'error')
             return redirect('/login')
         user = User.query.filter_by(username=username).first()
         if user and not check_pw_hash(password, user.pw_hash):
-            flash('Password is incorrect', 'error')
+            flash('Password is incorrect!', 'error')
             return redirect('/login')
         if user and check_pw_hash(password, user.pw_hash):
             session['username'] = username
@@ -109,13 +109,14 @@ def login():
             print(session)
             return redirect('/newpost')
         elif not user:
-            flash('Username does not exist', 'error')
+            flash('Username does not exist!', 'error')
             return redirect('/login')
 
     return render_template('login.html')
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -131,7 +132,7 @@ def signup():
             return redirect('/signup')
         else:
             if password != verify:
-                flash("Password don't match", 'error')
+                flash("Password doesn't match!", 'error')
                 return redirect('/signup')
         existing_user = User.query.filter_by(username=username).first()
         if not existing_user:
@@ -142,7 +143,7 @@ def signup():
             flash('Welcome to your blog, ' + username.capitalize() + '!', 'information')
             return redirect('/newpost')
         else:
-            flash('Username already exists', 'error')
+            flash('Username already exists!', 'error')
             return redirect('/signup')
 
     return render_template('signup.html')

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Blog posts</h1>
+<h1>Blog Posts</h1>
 {% for idx in range(posts|length) %}
     <h4 style="color:blue; font-style:italic"><a href="/blog?id={{posts[idx].id}}">{{posts[idx].title}}</a></h4>
     <p style="color:rgb(2, 26, 18); font-style: oblique">{{posts[idx].body}}</p>
