@@ -1,13 +1,15 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy 
 import os
-import json
+import cgi
+import sys
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:october@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = "happyhalloween"
 
 class Blog(db.Model):
 
@@ -16,31 +18,27 @@ class Blog(db.Model):
     body = db.Column(db.String(1000))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-def __init__(self, name, body, owner):
-    self.name = name
-    self.body = body
-    self.owner_id = owner
+    def __init__(self, name, body, owner):
+        self.name = name
+        self.body = body
+        self.owner_id = owner
 
 class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True)
+    username = db.Column(db.String(100))
     password = db.Column(db.String(20))
     blogs = db.relationship('Blog', backref='owner')
     
-def __init__(self, username, password):
-    self.username = username
-    self.password = password
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
 
-#@app.before_request
-#def require_login():
-    #allowed_routes = ['index', 'blog','login','signup','singleUser','viewpost']
-    #if ((request.endpoint not in allowed_routes) and ('username' not in session)):#
-        #return redirect('/login')#
-
-@app.route('/')
-def homepage():
-    return redirect('/blog')
+@app.before_request
+def require_login():
+    allowed_routes = ['index', 'blog','login','signup', 'static']
+    if ((request.endpoint not in allowed_routes) and ('username' not in session)):
+        return redirect('/login')
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -49,7 +47,6 @@ def index():
 
 @app.route("/login", methods=['GET','POST'])
 def login():
-
     if request.method == 'GET':
         if 'username' not in session:
             return render_template("login.html", page_title='Login')
@@ -75,6 +72,7 @@ def login():
 
     else:
         return render_template('login.html')
+
 
 @app.route("/signup", methods=['GET','POST'])
 def signup():
@@ -115,14 +113,14 @@ def signup():
             return redirect('/newpost')
     else:
         return render_template('signup.html')
-
+        
 @app.route('/blog')
 def blog():
     if "user" in request.args:
         user_id = request.args.get("user")
         user = User.query.get(user_id)
         user_blogs = Blog.query.filter_by(owner=user).all()
-        return render_template("individual.html", page_title = user.username + "'s Posts!", user_blogs=user_blogs)
+        return render_template("newpost.html", page_title = user.username + "'s Posts!", user_blogs=user_blogs)
     
     single_post = request.args.get("id")
     if single_post:
@@ -132,6 +130,13 @@ def blog():
     else:
         blogs = Blog.query.all()
         return render_template('blog.html', page_title="All Blog Posts!", blogs=blogs)
+
+@app.route('/singleUser')
+def singleUser_blog():
+    blog_id = request.args.get('id')
+    blog = Blog.query.get(blog_id)
+    return render_template('singleUser.html', blog=blog)
+
 
 @app.route('/newpost', methods=['GET'])
 def new_post():
@@ -164,8 +169,8 @@ def newpost():
                 new_entry = Blog(title_entry, body_entry, owner)
                 db.session.add(new_entry)
                 db.session.commit()
-                return redirect("/blog?id=" + str(new_entry.id))
- 
+                return redirect("/blog?id=" + str(new_entry.id)) 
+
 @app.route("/logout")
 def logout():
     del session['username']
