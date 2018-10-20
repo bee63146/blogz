@@ -73,7 +73,7 @@ def main_blog():
     if not request.args.get('id'):        
         posts = Post.query.all()
         return render_template('blog.html', page_title='Blogz', posts=posts)
-# ---------------------User/logn/signup/logout------------
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
@@ -95,20 +95,20 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == '' or password == '':#empty fields
+        if username == '' or password == '':
             flash('Invalid username', 'error')
             return redirect('/login')
         user = User.query.filter_by(username=username).first()
-        if user and not check_pw_hash(password, user.pw_hash):#pswd incorrect
+        if user and not check_pw_hash(password, user.pw_hash):
             flash('Password is incorrect', 'error')
             return redirect('/login')
-        if user and check_pw_hash(password, user.pw_hash):#validation succeeds
+        if user and check_pw_hash(password, user.pw_hash):
             session['username'] = username
             flash("Logged in", 'information')
             flash('Welcome back ' + username.capitalize() + '!', 'information')
             print(session)
             return redirect('/newpost')
-        elif not user:#new user
+        elif not user:
             flash('Username does not exist', 'error')
             return redirect('/login')
 
@@ -120,7 +120,7 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         verify = request.form['verify']
-        if username == '' or password == '' or verify == '':#empty fields
+        if username == '' or password == '' or verify == '':
             flash('One or more fields are invalid', 'error')
             return redirect('/signup')
         if len(username) < 3:
@@ -130,11 +130,11 @@ def signup():
             flash('Invalid password', 'error')
             return redirect('/signup')
         else:
-            if password != verify:#mismatch pswd
+            if password != verify:
                 flash("Password don't match", 'error')
                 return redirect('/signup')
         existing_user = User.query.filter_by(username=username).first()
-        if not existing_user:#new user
+        if not existing_user:
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
@@ -142,7 +142,7 @@ def signup():
             flash('Welcome to your blog, ' + username.capitalize() + '!', 'information')
             return redirect('/newpost')
         else:
-            flash('Username already exists', 'error')#same username used to create one more account
+            flash('Username already exists', 'error')
             return redirect('/signup')
 
     return render_template('signup.html')
