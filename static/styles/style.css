@@ -1,5 +1,8 @@
 body {
     background-color: rgb(26, 179, 240);
+    font-family: sans-serif;
+    margin: 0 auto;
+    padding: 10 px;
 
 }
 
@@ -12,6 +15,14 @@ form {
     border-radius: 10px;
     display: inline-block;
 }
+
+textarea {
+    width: 400px;
+    height: 200px;
+    font-size: 17px;
+    font-family: monospace;
+}
+
 content {
    
     margin: 10px;
@@ -27,4 +38,34 @@ li p{
 }
 .error {
     color: red;
+}
+
+nav ul {
+    padding: 0;
+    display: inline-block;
+}
+
+nav ul li {
+    list-style: none;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.post + .post {
+    margin-top: 20px;
+}
+
+.post-title {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.post-body {
+    margin: 0;
+    font-size: 17px;
+}
+
+.post-author {
+    font-style: italic;
+    font-size: 12px;
 }

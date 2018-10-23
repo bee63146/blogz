@@ -1,6 +1,11 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from hashutils import make_pw_hash, check_pw_hash
+import jinja2, os
+
+
+template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -57,7 +62,7 @@ def validate_blog():
             blog_body=blog_body, blog_titles=blog_titles, blog_bodyz=blog_bodyz, page_title='Blogz')
 
 @app.route("/blog", methods=['POST', 'GET'])
-def main_blog():
+def blog():
     username = request.args.get('username')
     owner = User.query.filter_by(username=username).first() 
     if request.args.get('id'):        
@@ -69,7 +74,7 @@ def main_blog():
     elif request.args.get('user'):
         userId = request.args.get('user')
         posts = Post.query.filter_by(owner_id=userId).all()          
-        return render_template('singleUser.html', posts=posts)
+        return render_template('single_blog.html', posts=posts)
     if not request.args.get('id'):        
         posts = Post.query.all()
         return render_template('blog.html', page_title='Blogz', posts=posts)
@@ -86,7 +91,7 @@ class User(db.Model):
 
 @app.before_request        
 def require_login():
-    allowed_routes = ['login', 'signup', 'main_blog', 'index']
+    allowed_routes = ['login', 'signup', 'blog', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
