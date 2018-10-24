@@ -1,33 +1,50 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html>
-    <head>        
+
+<head>
+    <title>{{title}}</title>
         <link rel="stylesheet" href="static\styles\style.css"/>
-            <title>{{page_title}}</title>
-    </head>
-    <body>
-        <div style="text-align: right ">
-            <a href='/login'>LOGIN</a> |
-            <a href='/logout'>LOG OUT</a>
-        </div>
-        <nav>
-            <ul>        
-            <li><a href="/">Home</a></li> 
-            <li><a href="/blog">All Posts</a></li>
-            <li><a href="/login">Create New Post</a></li>
-            </ul>
-        </nav>
-        {% with messages = get_flashed_messages(with_categories=True) %}
-            <ul>
-            {% for category,message in messages %}
-                <li class="{{category}}">{{message}}</li>
+    <h1>Wecome to Brandy's Blog</h1>
+
+    <nav style="text-align: right;">
+
+        <h4><a href="/newblog">New Blog</a>  |
+        <a href="/">Home</a></h4> 
+    </nav>
+</head>
+
+<body>
+    <div style='float: right'>
+        {% if 'user' in session %}
+          {{ session['user'] }}
+          <form action="/logout" method="post" id='logout'>
+            <input type="submit" value="Log Out" />
+          </form>
+        {% else %}
+          <a href="login">login</a> | <a href="signup">signup</a>
+        {% endif %}
+      </div>
+      <h2>
+          <a href="/blog">Blog List</a>
+      </h2>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=flashes>
+            {% for message in messages %}
+            <li style="color:red;">{{ message }}</li>
             {% endfor %}
-            </ul>    
-        {% endwith %}
+          </ul>
+        {% endif %}
+      {% endwith %}
 
-        {% block content %}
 
-        {% endblock %}
+    {% block content %}
 
-    </body>
+     {% endblock %}
+
+
+
+</body>
+
 </html>
